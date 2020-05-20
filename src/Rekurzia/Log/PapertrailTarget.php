@@ -74,7 +74,10 @@ class PapertrailTarget extends Target
     public function export()
     {
         foreach ($this->messages as $message) {
-            $this->getUdpSocket()->write($this->formatMessage($message));
+            $formattedMessage = $this->formatMessage($message);
+            for ($x=0;$x<mb_strlen($formattedMessage);$x+=1024) {
+                $this->getUdpSocket()->write(mb_strcut($formattedMessage,$x,$x+1024));
+            }
         }
         $this->getUdpSocket()->close();
     }
